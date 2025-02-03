@@ -4,14 +4,25 @@ from transformers import DetrImageProcessor, DetrForObjectDetection
 from PIL import Image
 import requests
 
-from diffusers import DiffusionPipeline
+# for generation
+from diffusers import StableDiffusionPipeline
 import torch
-
-pipe = DiffusionPipeline.from_pretrained("stabilityai/stable-diffusion-xl-base-1.0", torch_dtype=torch.float16, use_safetensors=True, variant="fp16")
-pipe.to("cuda")
-
+# PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:4
+torch.cuda.empty_cache()
 
 
+model_id = "runwayml/stable-diffusion-v1-5"
+pipe = StableDiffusionPipeline.from_pretrained(model_id, torch_dtype=torch.float16)
+pipe = pipe.to("cuda")
+
+safety_checker = pipe.safety_checker
+feature_extractor = pipe.feature_extractor
+
+pipe = StableDiffusionPipeline.from_pretrained("CompVis/stable-diffusion-v1-4", torch_type=torch.float16, revision="fp16", safety_checker = None)
+
+
+
+# negative_prompt = "nsfw, lowres, (bad), text, error, fewer, extra, missing, worst quality, jpeg artifacts, low quality, watermark, unfinished, displeasing, oldest, early, chromatic aberration, signature, extra digits, artistic error, username, scan, [abstract]"
 
 
 
@@ -31,7 +42,7 @@ image = Image.open(requests.get(url, stream=True).raw)
 width = image.width
 height = image.height
 
-# model and processor
+# you can specify the revision tag if you don't want the timm dependency
 processor = DetrImageProcessor.from_pretrained("facebook/detr-resnet-50", revision="no_timm")
 model = DetrForObjectDetection.from_pretrained("facebook/detr-resnet-50", revision="no_timm")
 
@@ -58,7 +69,7 @@ for l in labels:
 
 print("Detected objects in starter image: ")
 print(prompt)
-
+promptStr = " ".join(str(item) for item in prompt)
 
 # -- Ouroboros looping --
 
@@ -66,8 +77,8 @@ i = 1
 while(i < (loops + 1)):
 
     # generator
-    image = pipe(prompt).images[0]
-    image.save("astronaut_rides_horse_" + i + "_.png")
+    image = pipe(promptStr).images[0]
+    image.save("Ouro_" + str(i) + "_.png")
 
     # recognizer
     inputs = processor(images=image, return_tensors="pt")
@@ -77,6 +88,7 @@ while(i < (loops + 1)):
     for l in labels:
         prompt.append(model.config.id2label[l.item()])
 
+    promptStr = " ".join(str(item) for item in prompt)
     # incr
     i += 1
 
