@@ -11,7 +11,7 @@ Key features include:
 * Real-time updates in the GUI, displaying detected objects and log progress.
 * Customizable settings for iterations, likeness threshold, and negative prompts.
 
-To set up the program and install dependencies, run:
+To set up the program and install dependencies, run this in a Python 3.10 environment:
 
 pip install -r requirements.txt
 
