@@ -1,6 +1,6 @@
-transformers>=4.30.0
-torch>=2.0.0
-Pillow>=9.0.0
-requests>=2.25.0
-diffusers>=0.20.0
-safetensors>=0.3.0
+torch
+transformers
+diffusers
+Pillow
+tk
+requests
