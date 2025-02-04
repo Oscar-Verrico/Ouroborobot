@@ -17,3 +17,7 @@ pip install -r requirements.txt
 
 This will install all the necessary libraries, including PyTorch, Transformers, and Diffusers, 
 which are used for object detection and image generation.
+
+Sample Demo: 
+
+![Ouro_demo](https://github.com/user-attachments/assets/76ce54dc-4408-4726-a520-335693e6c3d1)
